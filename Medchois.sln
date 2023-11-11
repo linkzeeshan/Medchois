@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{17DA0784-A6E8-4D03-9AE0-B454BAF970D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservices", "{1904E2F5-388B-47DE-BF8F-9D0521A12076}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagementServices", "UserManagementServices", "{2B556BD3-9A66-4844-9BF1-73792CF23D3F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8S", "K8S", "{A9F4C87B-E5B4-4277-AED3-B9F7E058BBCB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{1BF7F9CE-8A61-4D11-BEF3-2C732184EE9F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB", "DB", "{755E5BF2-60B5-4F73-B924-A5BBF594668F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagementServices", "UserManagementServices\UserManagementServices.csproj", "{E3FA8861-12D1-4ABC-8B93-4553E9B33D49}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3FA8861-12D1-4ABC-8B93-4553E9B33D49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3FA8861-12D1-4ABC-8B93-4553E9B33D49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3FA8861-12D1-4ABC-8B93-4553E9B33D49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3FA8861-12D1-4ABC-8B93-4553E9B33D49}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1904E2F5-388B-47DE-BF8F-9D0521A12076} = {17DA0784-A6E8-4D03-9AE0-B454BAF970D7}
+		{2B556BD3-9A66-4844-9BF1-73792CF23D3F} = {1904E2F5-388B-47DE-BF8F-9D0521A12076}
+		{E3FA8861-12D1-4ABC-8B93-4553E9B33D49} = {2B556BD3-9A66-4844-9BF1-73792CF23D3F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C7393878-B3A3-4D2A-92F5-68CFD4B7F341}
+	EndGlobalSection
+EndGlobal
