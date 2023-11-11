@@ -4,3 +4,8 @@
 
 /.vs/Medchois/FileContentIndex
 /UserManagementServices/bin/Debug/net7.0
+/AdminManagementServices/obj
+/.vs/Medchois/v17
+/AppointmentManagementServices/obj
+/DoctorManagementServices/obj
+/PatientManagementServices/obj
