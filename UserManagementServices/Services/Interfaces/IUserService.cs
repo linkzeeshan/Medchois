@@ -15,6 +15,7 @@ namespace UserManagementServices.Services.Interfaces
         Task<ApiResponse<string>> ForgotPasswordAsync(string email);
         Task<ApiResponse<string>> ResetPasswordAsync(ResetPasswordViewModel model);
         Task<ApiResponse<List<string>>> AssignRoleToUserAsync(IEnumerable<string> roles, IdentityUser user);
+        Task<IdentityUser> GetUserByEmailAsync(string email);
 
     }
 }

@@ -35,27 +35,29 @@ namespace UserManagementServices.Services
             _logger = logger;
             _emailService = emailService;
             _signinManager = signinManager;
+
         }
 
         public async Task<ApiResponse<List<string>>> AssignRoleToUserAsync(IEnumerable<string> roles, IdentityUser user)
         {
-            var assignRole = new List<string>();    
+            var assignRole = new List<string>();
             try
             {
 
                 foreach (var role in roles)
                 {
-                   if(await _roleManager.RoleExistsAsync(role))
+                    if (await _roleManager.RoleExistsAsync(role))
                     {
-                        if(!await _userManager.IsInRoleAsync(user,role))
+                        if (!await _userManager.IsInRoleAsync(user, role))
                         {
                             await _userManager.AddToRoleAsync(user, role);
                         }
-                        
+
                     }
                 }
-             return new ApiResponse<List<string>> { Data = assignRole,Message= "Roles has  been assigned", StatusCode = StatusCodes.Status200OK };
-            }catch(Exception ex)
+                return new ApiResponse<List<string>> { Data = assignRole, Message = "Roles has  been assigned", StatusCode = StatusCodes.Status200OK };
+            }
+            catch (Exception ex)
             {
                 return new ApiResponse<List<string>> { Data = assignRole, Message = "Roles are not assigned", StatusCode = StatusCodes.Status400BadRequest };
             }
@@ -79,7 +81,8 @@ namespace UserManagementServices.Services
 
                 }
                 return new ApiResponse<string> { Success = false, Message = $"Email does not confirmed {user.Email}", StatusCode = StatusCodes.Status201Created };
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return new ApiResponse<string> { Success = false, Message = $"{ex.Message}", StatusCode = StatusCodes.Status201Created };
             }
@@ -90,10 +93,11 @@ namespace UserManagementServices.Services
             var userExist = await _userManager.FindByEmailAsync(registerUser.Email);
             if (userExist != null)
             {
-                var response = new ApiResponse<string> {
-                 Success = false,
-                 Message = "User Already Exist",
-                 StatusCode = StatusCodes.Status400BadRequest
+                var response = new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = "User Already Exist",
+                    StatusCode = StatusCodes.Status400BadRequest
                 };
             }
             //Add user in database
@@ -105,26 +109,30 @@ namespace UserManagementServices.Services
                 TwoFactorEnabled = true, //I have Enabled two factor authentication It will verify user on login leve
             };
 
-                var result = await _userManager.CreateAsync(user, registerUser.Password);
-                if (!result.Succeeded)
-                {
-                    return new ApiResponse<CreateUserResponse> { Success = true, Message = $"User Fail Created: {result.Errors.FirstOrDefault().Description}", StatusCode = StatusCodes.Status201Created };
-                   
-                }
+            var result = await _userManager.CreateAsync(user, registerUser.Password);
+            if (!result.Succeeded)
+            {
+                return new ApiResponse<CreateUserResponse> { Success = true, Message = $"User Fail Created: {result.Errors.FirstOrDefault().Description}", StatusCode = StatusCodes.Status201Created };
+
+            }
 
             // Add Role
             await AssignRoleToUserAsync(registerUser.UserRoles, user);
-                //Add token to verify email
+            //Add token to verify email
             var token = await _userManager.GenerateChangeEmailTokenAsync(user, user.Email);
-                //var confirmationLink = Url.Action(nameof(ConfirmEmail), "Authentication", new { token, email = user.Email });
-                //var message = new Message(new string[] { user.Email }, "Confirmation email link", confirmationLink!);
+            var baseURL = _configuration["EmailConfiguration:BaseURL"];
+            var confirmationLink = $"{baseURL}/ConfirmEmail?email={user.Email}&token={token}";
+            var message = new Message(new string[] { user.Email }, "Confirmation email link", confirmationLink!);
+            await _emailService.SendEmailAsyc(message);
 
-                //await _emailService.SendEmailAsyc(message);
-                
-            return new ApiResponse<CreateUserResponse> { Success = true,
+            return new ApiResponse<CreateUserResponse>
+            {
+                Success = true,
                 Message = $"User created & Email sent to {user.Email} successfully",
-                StatusCode= StatusCodes.Status201Created, Data = new CreateUserResponse {Token = token, User = user } };
-           
+                StatusCode = StatusCodes.Status201Created,
+                Data = new CreateUserResponse { Token = token, User = user }
+            };
+
         }
 
         public async Task<ApiResponse<string>> ForgotPasswordAsync(string email)
@@ -136,19 +144,28 @@ namespace UserManagementServices.Services
                 if (user != null)
                 {
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var baseURL = _configuration["EmailConfiguration:BaseURL"];
+                    var forgotPasswordlink = $"{baseURL}/ResetPassword?email={user.Email}&token={token}";
                     //var forgotPasswordlink = Url.Action("ResetPassword", "Authentication", new { token, email = user.Email }, Request.Scheme);
-                    //var message = new Message(new string[] { user.Email! }, "Forgot Password Link", forgotPasswordlink);
-                    //await _emailService.SendEmailAsyc(message);
+                    var message = new Message(new string[] { user.Email! }, "Forgot Password Link", forgotPasswordlink);
+                    await _emailService.SendEmailAsyc(message);
                     return new ApiResponse<string> { Success = true, Message = $"We have sent to OTP on your Email {user.Email} successfully", StatusCode = StatusCodes.Status201Created };
 
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return new ApiResponse<string> { Success = false, Message = ex.Message, StatusCode = StatusCodes.Status400BadRequest };
 
             }
             return new ApiResponse<string> { Success = false, Message = $"Coludn't send link to email, Please try agian", StatusCode = StatusCodes.Status400BadRequest };
 
+        }
+
+        public async Task<IdentityUser> GetUserByEmailAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            return user;
         }
 
         public async Task<ApiResponse<LoginOTPResponse>> LoginAsync(LoginViewModel login)
@@ -181,15 +198,19 @@ namespace UserManagementServices.Services
                     //sending OTP to user email for varification
                     //Add token to verify email
                     var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-                    //var confirmationLink = Url.Action(nameof(ConfirmEmail), "Authentication", new { token, email = user.Email });
-                    //var message = new Message(new string[] { user.Email! }, "OTP Confirmation", token);
-                    //await _emailService.SendEmailAsyc(message);
-                    return new ApiResponse<LoginOTPResponse> { Success = true, Message = $"We have sent to OTP on your Email {user.Email} successfully", StatusCode = StatusCodes.Status201Created,
-                        Data = new LoginOTPResponse { Token = token, expiration = new DateTime() } };
+                    var message = new Message(new string[] { user.Email! }, "OTP Confirmation", token);
+                    await _emailService.SendEmailAsyc(message);
+                    return new ApiResponse<LoginOTPResponse>
+                    {
+                        Success = true,
+                        Message = $"We have sent to OTP on your Email {user.Email} successfully",
+                        StatusCode = StatusCodes.Status201Created,
+                        Data = new LoginOTPResponse { Token = token, expiration = new DateTime() }
+                    };
 
                 }
 
-              
+
             }
             //return token as expected
             var jwtToken = GetToken(authClaim);
@@ -221,14 +242,14 @@ namespace UserManagementServices.Services
                             authClaim.Add(new Claim(ClaimTypes.Role, role));
                         }
                         //return token as expected
-
                         var jwtToken = GetToken(authClaim);
                         return new ApiResponse<LoginOTPResponse> { Success = true, Message = $"Account is created successfully", StatusCode = StatusCodes.Status201Created, Data = new LoginOTPResponse { Token = new JwtSecurityTokenHandler().WriteToken(jwtToken), expiration = jwtToken.ValidTo } };
 
                     }
 
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return new ApiResponse<LoginOTPResponse> { Success = true, Message = $"{ex.Message}", StatusCode = StatusCodes.Status400BadRequest, Data = new LoginOTPResponse() };
 
@@ -252,7 +273,7 @@ namespace UserManagementServices.Services
 
                 return new ApiResponse<string> { Success = true, Message = $"Password has been changed", StatusCode = StatusCodes.Status201Created };
 
-              
+
             }
             return new ApiResponse<string> { Success = true, Message = $"Could not reset password please try again", StatusCode = StatusCodes.Status412PreconditionFailed };
 

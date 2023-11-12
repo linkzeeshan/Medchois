@@ -1,4 +1,5 @@
-﻿using UserManagementServices.Dtos;
+﻿using Microsoft.AspNetCore.Identity;
+using UserManagementServices.Dtos;
 using UserManagementServices.Models.ViewModel;
 
 namespace UserManagementServices.Data.Repository.Interfaces
@@ -11,5 +12,7 @@ namespace UserManagementServices.Data.Repository.Interfaces
         Task<ApiResponse<LoginOTPResponse>> LoginWithOTPAsync(string code, string email);
         Task<ApiResponse<string>> ForgotPasswordAsync(string email);
         Task<ApiResponse<string>> ResetPasswordAsync(ResetPasswordViewModel model);
+        Task<ApiResponse<ResetPasswordViewModel>> ResetPasswordAsync(string token, string email);
+        Task<IdentityUser> GetUserByEmailAsync(string email);
     }
 }

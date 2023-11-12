@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.Win32;
 using NPOI.OpenXmlFormats.Dml.Diagram;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
@@ -82,16 +83,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "User Management API", Version = "v1" });
-option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-{
-    In = ParameterLocation.Header,
-    Description = "Please enter a valid token",
-    Name = "Authorization",
-    Type = SecuritySchemeType.Http,
-    BearerFormat = "JWT",
-    Scheme = "Bearer"
-});
-option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -119,64 +120,54 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapPost("/Register", [AllowAnonymous] async ([FromBody] UserCreateDto model, IUserEmailService _emailService, IUserManagementRepo _repositoiry) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", [Authorize] () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
-app.MapPost("/Register", [AllowAnonymous]async ([FromBody] UserCreateDto model, IUserEmailService _emailService,  IUserManagementRepo _repositoiry, HttpContext context) =>
-{
-    var response = await _repositoiry.CreateAsync(model);
-    var baseURL = context.Request.Host;
-    var basepath = context.Request.Path;
-    var confirmationLink = $"{baseURL}/{nameof(ConfirmEmail)}?email={model.Email}&token={response.Data.Token}"; //Url.(nameof(ConfirmEmail), "Authentication", new { response.Data.Token, email = model.Email });
-    var message = new Message(new string[] { model.Email }, "Confirmation email link", confirmationLink!);
-    await _emailService.SendEmailAsyc(message);
-    return response;
+    return await _repositoiry.CreateAsync(model);
 })
 .WithName("Register")
 .WithOpenApi();
 
-app.MapPost("/Login", [AllowAnonymous] async ([FromBody] LoginViewModel model, IUserEmailService _emailService, IUserManagementRepo _repositoiry, HttpContext context) =>
+app.MapPost("/Login", [AllowAnonymous] async ([FromBody] LoginViewModel model, IUserEmailService _emailService, IUserManagementRepo _repositoiry) =>
 {
     var response = await _repositoiry.LoginAsync(model);
-    var baseURL = context.Request.Host;
-    var basepath = context.Request.Path;
-
-    //var confirmationLink = $"{baseURL}/{nameof(ConfirmEmail)}?email={model.Email}&token={response.Data.Token}";
-    var message = new Message(new string[] { model.Email! }, "OTP Confirmation", response.Data.Token);
-    await _emailService.SendEmailAsyc(message);
     return response;
 })
 .WithName("Login")
 .WithOpenApi();
+
+app.MapPost("/login-2FA", [AllowAnonymous] async (string code, string username, IUserEmailService _emailService, IUserManagementRepo _repositoiry) =>
+{
+    return await _repositoiry.LoginWithOTPAsync(code, username); ;
+})
+.WithName("Login-2FA")
+.WithOpenApi();
+
+app.MapGet("/ForgotPassword", [AllowAnonymous] async ([Required] string email, IUserManagementRepo _repositoiry) =>
+{
+    return await _repositoiry.ForgotPasswordAsync(email);
+})
+.WithName("ForgotPassword")
+.WithOpenApi();
+
+app.MapGet("/ResetPassword", [AllowAnonymous] async (string token, string email, IUserManagementRepo _repositoiry) =>
+{
+    return await _repositoiry.ResetPasswordAsync(token, email);
+})
+.WithName("GetResetPassword")
+.WithOpenApi();
+
+app.MapPost("/ResetPassword", [AllowAnonymous] async (ResetPasswordViewModel model, IUserManagementRepo _repositoiry) =>
+{
+    return await _repositoiry.ResetPasswordAsync(model);
+})
+.WithName("ResetPassword")
+.WithOpenApi();
+
 app.MapGet("/ConfirmEmail", [AllowAnonymous] async (string email, string token, IUserManagementRepo _repositoiry) =>
 {
-    var response = await _repositoiry.ConfirnmEmailAsync(email, token);
-    return response;
+    return await _repositoiry.ConfirnmEmailAsync(email, token);
 })
 .WithName("ConfirmEmail")
 .WithOpenApi();
 
-app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
 

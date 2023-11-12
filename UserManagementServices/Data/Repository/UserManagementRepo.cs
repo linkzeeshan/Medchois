@@ -15,7 +15,7 @@ namespace UserManagementServices.Data.Repository
         {
             _userService = userService;
         }
-        public  async Task<ApiResponse<string>> ConfirnmEmailAsync(string email, string token)
+        public async Task<ApiResponse<string>> ConfirnmEmailAsync(string email, string token)
         {
             return await _userService.ConfirnmEmailAsync(email, token);
         }
@@ -23,15 +23,17 @@ namespace UserManagementServices.Data.Repository
         public async Task<ApiResponse<CreateUserResponse>> CreateAsync(UserCreateDto user)
         {
             //user is created but not activated
-            var response = await _userService.CreateAsync(user);
-            //Add assigned roles
-            await _userService.AssignRoleToUserAsync(user.UserRoles, response.Data.User);
-            return response;
+            return await _userService.CreateAsync(user);
         }
 
         public Task<ApiResponse<string>> ForgotPasswordAsync(string email)
         {
-            return _userService.ForgotPasswordAsync(email); 
+            return _userService.ForgotPasswordAsync(email);
+        }
+
+        public async Task<IdentityUser> GetUserByEmailAsync(string email)
+        {
+            return await _userService.GetUserByEmailAsync(email);
         }
 
         public async Task<ApiResponse<LoginOTPResponse>> LoginAsync(LoginViewModel login)
@@ -41,12 +43,20 @@ namespace UserManagementServices.Data.Repository
 
         public async Task<ApiResponse<LoginOTPResponse>> LoginWithOTPAsync(string code, string email)
         {
-           return await _userService.LoginWithOTPAsync(code, email);
+            return await _userService.LoginWithOTPAsync(code, email);
         }
 
         public async Task<ApiResponse<string>> ResetPasswordAsync(ResetPasswordViewModel model)
         {
             return await _userService.ResetPasswordAsync(model);
+        }
+
+        public async Task<ApiResponse<ResetPasswordViewModel>> ResetPasswordAsync(string token, string email)
+        {
+            if (token == null) { throw new ArgumentNullException("token"); }
+            if (email == null) { throw new ArgumentNullException("email"); }
+            var model = new ResetPasswordViewModel { Email = email, Token = token };
+            return new ApiResponse<ResetPasswordViewModel> { Success = true, Data = model };
         }
     }
 }
