@@ -170,4 +170,6 @@ app.MapGet("/ConfirmEmail", [AllowAnonymous] async (string email, string token, 
 .WithName("ConfirmEmail")
 .WithOpenApi();
 
+app.Run();
+
 
