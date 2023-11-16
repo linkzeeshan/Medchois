@@ -25,13 +25,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DoctorManagementServices", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PatientManagementServices", "PatientManagementServices", "{A4A0E9F0-5841-4EEE-A0E7-33C7D42219AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppointmentManagementServices", "AppointmentManagementServices\AppointmentManagementServices.csproj", "{6572D81A-ED8F-4EA2-A614-A8FD5D83177D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppointmentManagementServices", "AppointmentManagementServices\AppointmentManagementServices.csproj", "{6572D81A-ED8F-4EA2-A614-A8FD5D83177D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoctorManagementServices", "DoctorManagementServices\DoctorManagementServices.csproj", "{B1786132-62A7-46AE-B12D-D6489D2CF0CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoctorManagementServices", "DoctorManagementServices\DoctorManagementServices.csproj", "{B1786132-62A7-46AE-B12D-D6489D2CF0CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatientManagementServices", "PatientManagementServices\PatientManagementServices.csproj", "{45335B9D-2FC4-4DF4-80A7-8DE13AAB46AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PatientManagementServices", "PatientManagementServices\PatientManagementServices.csproj", "{45335B9D-2FC4-4DF4-80A7-8DE13AAB46AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminManagementServices", "AdminManagementServices\AdminManagementServices.csproj", "{0AC60E51-89BD-4BE5-B79F-5F493417E9C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminManagementServices", "AdminManagementServices\AdminManagementServices.csproj", "{0AC60E51-89BD-4BE5-B79F-5F493417E9C5}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Medchois.DB", "Medchois.DB\Medchois.DB.sqlproj", "{575BA1A5-3F96-42E6-B7A7-2E44CB4AB890}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,12 @@ Global
 		{0AC60E51-89BD-4BE5-B79F-5F493417E9C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AC60E51-89BD-4BE5-B79F-5F493417E9C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AC60E51-89BD-4BE5-B79F-5F493417E9C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{575BA1A5-3F96-42E6-B7A7-2E44CB4AB890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{575BA1A5-3F96-42E6-B7A7-2E44CB4AB890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{575BA1A5-3F96-42E6-B7A7-2E44CB4AB890}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{575BA1A5-3F96-42E6-B7A7-2E44CB4AB890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{575BA1A5-3F96-42E6-B7A7-2E44CB4AB890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{575BA1A5-3F96-42E6-B7A7-2E44CB4AB890}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +83,7 @@ Global
 		{B1786132-62A7-46AE-B12D-D6489D2CF0CE} = {66ABA737-2505-4F04-9B92-4C5A8F111667}
 		{45335B9D-2FC4-4DF4-80A7-8DE13AAB46AA} = {A4A0E9F0-5841-4EEE-A0E7-33C7D42219AD}
 		{0AC60E51-89BD-4BE5-B79F-5F493417E9C5} = {60229394-68E9-4DC5-AD1D-355518D534D3}
+		{575BA1A5-3F96-42E6-B7A7-2E44CB4AB890} = {755E5BF2-60B5-4F73-B924-A5BBF594668F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7393878-B3A3-4D2A-92F5-68CFD4B7F341}

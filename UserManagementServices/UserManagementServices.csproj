@@ -30,7 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\DomainModel\" />
+    <Folder Include="Domain\Entities\" />
+    <Folder Include="Domain\Extensions\" />
+    <Folder Include="Domain\Validators\" />
+    <Folder Include="Infrastructure\Data\Repository\" />
     <Folder Include="Protos\" />
   </ItemGroup>
 

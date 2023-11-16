@@ -13,13 +13,12 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Policy;
 using System.Text;
-using UserManagementServices.Cores;
-using UserManagementServices.Data;
-using UserManagementServices.Data.Repository;
-using UserManagementServices.Data.Repository.Interfaces;
-using UserManagementServices.Dtos;
-using UserManagementServices.Models.ViewModel;
+using UserManagementServices.Domain.Dtos.UserDtos;
+using UserManagementServices.Domain.IRepository;
+using UserManagementServices.Infrastructure.Data;
+using UserManagementServices.Infrastructure.Repositories;
 using UserManagementServices.Services;
+using UserManagementServices.Services.EmailService;
 using UserManagementServices.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -110,7 +109,6 @@ builder.Services.AddSwaggerGen(option =>
 
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -127,7 +125,7 @@ app.MapPost("/Register", [AllowAnonymous] async ([FromBody] UserCreateDto model,
 .WithName("Register")
 .WithOpenApi();
 
-app.MapPost("/Login", [AllowAnonymous] async ([FromBody] LoginViewModel model, IUserEmailService _emailService, IUserManagementRepo _repositoiry) =>
+app.MapPost("/Login", [AllowAnonymous] async ([FromBody] LoginDto model, IUserEmailService _emailService, IUserManagementRepo _repositoiry) =>
 {
     var response = await _repositoiry.LoginAsync(model);
     return response;
@@ -156,7 +154,7 @@ app.MapGet("/ResetPassword", [AllowAnonymous] async (string token, string email,
 .WithName("GetResetPassword")
 .WithOpenApi();
 
-app.MapPost("/ResetPassword", [AllowAnonymous] async (ResetPasswordViewModel model, IUserManagementRepo _repositoiry) =>
+app.MapPost("/ResetPassword", [AllowAnonymous] async (ResetPasswordDto model, IUserManagementRepo _repositoiry) =>
 {
     return await _repositoiry.ResetPasswordAsync(model);
 })
@@ -170,6 +168,20 @@ app.MapGet("/ConfirmEmail", [AllowAnonymous] async (string email, string token, 
 .WithName("ConfirmEmail")
 .WithOpenApi();
 
+app.MapPost("/TestAuthorization", async (string token, HttpContext httpContext) =>
+{
+    var user = httpContext.User;
+    return user;
+}).RequireAuthorization()
+.WithName("TestAuthorization")
+.WithOpenApi();
+
+//app.UseCors();
+//app.UseAuthentication();
+//app.UseRouting();
+//app.UseAuthorization();
+
+app.MapGet("/", () => "Hello World!");
 app.Run();
 
 
